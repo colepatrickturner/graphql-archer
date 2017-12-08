@@ -1,1 +1,1 @@
-export { default as default } from './program';
+export { default as default } from './src/program';

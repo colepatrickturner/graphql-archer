@@ -1,4 +1,4 @@
-import colors from 'colors';
+import chalk from 'chalk';
 
 export const defaultTextProcessor = str => str;
 export const processOutputArgs = (args, processor = defaultTextProcessor) => {
@@ -14,16 +14,16 @@ export const processOutputArgs = (args, processor = defaultTextProcessor) => {
 };
 
 export default function output(args, processor = defaultTextProcessor) {
-  return console.info(processOutputArgs(['🏹 '].concat(args), processor));
+  return console.info(processOutputArgs(['🏹  '].concat(args), processor));
 }
 
-export const createColoredOutput = (colorer) => {
+export const createColoredOutput = colorer => {
   return (...str) => {
     output(str, colorer);
-  }
-}
+  };
+};
 
-export const info = createColoredOutput(colors.white);
-export const warn = createColoredOutput(colors.yellow);
-export const fail = createColoredOutput(colors.red);
-export const success = createColoredOutput(colors.green);
+export const info = createColoredOutput(chalk.white);
+export const warn = createColoredOutput(chalk.yellow);
+export const fail = createColoredOutput(chalk.red);
+export const success = createColoredOutput(chalk.green);

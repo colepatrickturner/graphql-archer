@@ -1,10 +1,9 @@
-
+import chalk from 'chalk';
 import inquirer from 'inquirer';
 import { success, fail } from '../output';
 
-
 export function createProject(name) {
-  success('Creating project with name:', name);
+  success(chalk.white('Creating project with name:'), name);
 }
 
 const nameQuestion = {
@@ -13,11 +12,11 @@ const nameQuestion = {
   message: 'Please enter a name...',
 };
 
-export default function (program) {
+export default function(program) {
   program
     .command('create [name]')
     .description('creates a project by name')
-    .action((name, options) => {
+    .action(name => {
       if (name) {
         return createProject(name);
       }
@@ -30,5 +29,4 @@ export default function (program) {
         return fail('You must specify a project name');
       });
     });
-
 }
