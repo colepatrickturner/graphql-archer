@@ -1,0 +1,54 @@
+{
+  "name": "graphql-archer",
+  "version": "0.0.1",
+  "description": "Node cli for generating a graphql project and boostrapping schema",
+  "main": "index.js",
+  "bin": {
+    "graphql-archer": "./bin/graphql-archer"
+  },
+  "lint-staged": {
+    "src/**/*.{js,jsx,json,scss,css}": [
+      "prettier --config .prettierrc --write",
+      "git add"
+    ]
+  },
+  "scripts": {
+    "precommit": "lint-staged",
+    "start": "babel-node ./archer.js",
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/colepatrickturner/graphql-archer.git"
+  },
+  "keywords": [
+    "node",
+    "graphql",
+    "apollo"
+  ],
+  "author": "Cole Turner",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/colepatrickturner/graphql-archer/issues"
+  },
+  "homepage": "https://github.com/colepatrickturner/graphql-archer#readme",
+  "dependencies": {
+    "colors": "^1.1.2",
+    "commander": "^2.12.2",
+    "inquirer": "^4.0.1",
+    "program": "^1.0.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-plugin-inline-json-import": "^0.2.1",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "babel-register": "^6.26.0",
+    "lint-staged": "^6.0.0",
+    "prettier": "^1.9.1"
+  },
+  "engines": {
+    "node": ">=0.12"
+  },
+  "engineStrict": true
+}

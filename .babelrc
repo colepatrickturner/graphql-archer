@@ -1,0 +1,18 @@
+{
+  "presets": [
+    [
+      "env",
+      {
+        "targets": {
+          "node": 8
+        }
+      }
+    ]
+  ],
+  "plugins": [
+    [
+      "inline-json-import",
+      {}
+    ]
+  ]
+}
