@@ -1,0 +1,17 @@
+{
+  "babel": {
+    "plugins": [
+      "inline-import",
+      "transform-object-rest-spread",
+      [
+        "env",
+        {
+          "targets": {
+            "node": 8
+          }
+        }
+      ]
+    ],
+    "presets": []
+  }
+}

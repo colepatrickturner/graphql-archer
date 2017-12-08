@@ -37,8 +37,7 @@
     "chalk": "^2.3.0",
     "commander": "^2.12.2",
     "inquirer": "^4.0.1",
-    "program": "^1.0.0",
-    "sanitize-filename": "^1.6.1"
+    "program": "^1.0.0"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",

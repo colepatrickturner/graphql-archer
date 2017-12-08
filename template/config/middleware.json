@@ -1,0 +1,26 @@
+{
+  "graphql": {
+    "enabled": true,
+    "priority": 30,
+    "route": "/graphql",
+    "module": {
+      "name": "../src/lib/middleware/graphql"
+    }
+  },
+  "graphiql": {
+    "enabled": false,
+    "priority": 50,
+    "route": "/graphiql",
+    "module": {
+      "name": "../src/lib/middleware/graphiql"
+    }
+  },
+  "gqlplayground": {
+    "enabled": false,
+    "priority": 51,
+    "route": "/playground",
+    "module": {
+      "name": "../src/lib/middleware/gqlplayground"
+    }
+  }
+}

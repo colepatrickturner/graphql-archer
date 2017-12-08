@@ -1,3 +1,5 @@
-import sanitize from 'sanitize-filename';
+export function toFileSystemName(name) {
+  return name.replace(/[^a-zA-Z]/g, '');
+}
 
-export function toFileSystemName(name) {}
+export function createProject(name, dry = false) {}

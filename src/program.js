@@ -6,7 +6,7 @@ const { version } = packageJSON;
 
 registerCommands(program)
   .version(version)
-  .parse(process.argv);
+  .parse(process.argv); // eslint-disable-line
 
 if (!program.args.length) {
   program.outputHelp();
