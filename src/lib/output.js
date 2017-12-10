@@ -26,4 +26,5 @@ export const createColoredOutput = colorer => {
 export const info = createColoredOutput(chalk.white);
 export const warn = createColoredOutput(chalk.yellow);
 export const fail = createColoredOutput(chalk.red);
+export const debug = createColoredOutput(chalk.yellow);
 export const success = createColoredOutput(chalk.green);

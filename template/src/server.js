@@ -6,5 +6,5 @@ import shush from 'shush';
 const config = shush('./config/middleware');
 
 const app = express();
-app.use(meddleware('config'));
+app.use(meddleware(config));
 http.createServer(app).listen(8080);

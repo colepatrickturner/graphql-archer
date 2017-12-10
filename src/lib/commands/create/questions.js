@@ -10,6 +10,7 @@ export const reformattedName = name => ({
   type: 'expand',
   message: `Use folder name "${name}"?`,
   name: 'confirm',
+  default: 'y',
   choices: [
     {
       key: 'y',
@@ -20,12 +21,6 @@ export const reformattedName = name => ({
       key: 'n',
       name: 'No, choose new name',
       value: 'n',
-    },
-    new inquirer.Separator(),
-    {
-      key: 'x',
-      name: 'Abort',
-      value: 'x',
     },
   ],
 });

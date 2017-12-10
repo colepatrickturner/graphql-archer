@@ -1,13 +1,20 @@
 import program from 'commander';
-import packageJSON from '../package.json';
+import storeFactory from './store';
+import storage from 'node-persist';
 import { registerCommands } from './lib/commands';
+import { getPackageVersion } from './lib/Archer';
 
-const { version } = packageJSON;
+const store = storeFactory(program);
 
-registerCommands(program)
-  .version(version)
-  .parse(process.argv); // eslint-disable-line
+function run() {
+  registerCommands({ program, storage, store })
+    .option('-d, --debug', 'Enable debug info')
+    .version(getPackageVersion())
+    .parse(process.argv); // eslint-disable-line
 
-if (!program.args.length) {
-  program.outputHelp();
+  if (!program.args.length) {
+    program.outputHelp();
+  }
 }
+
+storage.init().then(run);

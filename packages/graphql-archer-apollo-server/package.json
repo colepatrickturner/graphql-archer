@@ -1,0 +1,25 @@
+{
+  "name": "graphql-archer-apollo-server",
+  "version": "1.0.0",
+  "description": "GraphQL Archer plugin for bootstrapping an Apollo server",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/colepatrickturner/graphql-archer.git"
+  },
+  "keywords": [
+    "graphql"
+  ],
+  "author": "Cole Turner",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/colepatrickturner/graphql-archer/issues"
+  },
+  "homepage": "https://github.com/colepatrickturner/graphql-archer#readme",
+  "dependencies": {
+    "node-fs-extra": "^0.8.2"
+  }
+}

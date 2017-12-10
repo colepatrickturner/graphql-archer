@@ -2,9 +2,10 @@ import create from './create';
 
 const commandsArray = [create];
 
-export function registerCommands(program) {
+export function registerCommands(args) {
+  const { program } = args;
   commandsArray.forEach(command => {
-    command(program);
+    command(args);
   });
 
   return program;
