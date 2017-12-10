@@ -1,10 +1,14 @@
 import fs from 'fs-extra';
 import path from 'path';
 import { CHOOSE_SERVER } from './constants';
-import { takeEvery, select } from '../../src/lib/effects';
-import { inquire, waitForAnswerTo } from '../../src/lib/effects';
-import { SCAFFOLD_PROJECT } from '../../src/store/sagas/project';
-import { fail, success } from 'graphql-archer/src/lib/output';
+import {
+  takeEvery,
+  select,
+  inquire,
+  waitForAnswerTo,
+} from 'graphql-archer/src/effects';
+import { SCAFFOLD_PROJECT } from 'graphql-archer/src/sagas/project/create';
+import { success } from 'graphql-archer/src/lib/output';
 
 function getGraphqlServerOptions(state) {
   return state['graphql-archer-servers'].servers;

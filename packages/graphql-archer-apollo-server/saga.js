@@ -1,6 +1,6 @@
 import path from 'path';
-import { put } from '../../src/lib/effects';
-import { ADD_SERVER_CHOICE } from '../graphql-archer-servers/constants';
+import { put } from 'graphql-archer/src/effects';
+import { ADD_SERVER_CHOICE } from 'graphql-archer-servers/constants';
 
 const injectServerChoice = put({
   type: ADD_SERVER_CHOICE,

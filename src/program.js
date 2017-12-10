@@ -1,8 +1,8 @@
 import program from 'commander';
 import storeFactory from './store';
 import storage from 'node-persist';
-import { registerCommands } from './lib/commands';
-import { getPackageVersion } from './lib/Archer';
+import { registerCommands } from './commands';
+import { getPackageVersion } from './lib/util';
 
 const store = storeFactory(program);
 

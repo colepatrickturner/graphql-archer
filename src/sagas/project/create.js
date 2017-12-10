@@ -1,17 +1,15 @@
 import chalk from 'chalk';
-import inquirer from 'inquirer';
 import { success, fail } from '../../lib/output';
-import { toFileSystemName, createProject } from '../../lib/Project';
-import * as Questions from '../../lib/commands/create/questions';
-import inquire, { QUESTION, ANSWER } from '../../lib/effects/inquire';
-import { put, takeEvery, waitForAnswerTo } from '../../lib/effects';
+import { toFileSystemName, createProject } from '../../lib/util';
+import * as Questions from '../../commands/create/questions';
+import inquire from '../../effects/inquire';
+import { put, waitForAnswerTo } from '../../effects';
 
 export const QUESTION_PROJECT_NAME = Symbol();
 export const QUESTION_IS_NAME_GOOD = Symbol();
-export const CREATE_PROJECT = Symbol();
 export const SCAFFOLD_PROJECT = Symbol();
 
-export function* createProjectSaga(action) {
+export default function* createProjectSaga(action) {
   let { name } = action;
 
   while (true) {
@@ -43,6 +41,7 @@ export function* createProjectSaga(action) {
       name = formattedName;
     }
 
+    // Kick off the creation event loop
     success(chalk.white('Creating project with name:'), name);
 
     try {
@@ -54,21 +53,4 @@ export function* createProjectSaga(action) {
 
     break;
   }
-}
-
-const inquiry = takeEvery('*', function*(action) {
-  if (action.type === QUESTION) {
-    const { id, queries } = action;
-    const answer = yield inquirer.prompt(queries);
-
-    yield put({
-      type: ANSWER,
-      id,
-      answer,
-    });
-  }
-});
-
-export default function* projectSaga() {
-  yield [takeEvery(CREATE_PROJECT, createProjectSaga), inquiry];
 }

@@ -1,5 +1,3 @@
-import inquirer from 'inquirer';
-
 export const name = () => ({
   type: 'input',
   name: 'name',
