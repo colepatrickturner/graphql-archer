@@ -18,13 +18,8 @@ export function createProject(name) {
 
   // Copy our root template
   const templatePath = path.resolve(path.join(__dirname), '../../template/');
-  fs.copy(templatePath, cwd, err => {
-    if (err) {
-      fail(err);
-    }
-
-    success(`Copied base project to ${cwd}`);
-  });
+  fs.copySync(templatePath, cwd);
+  success(`Copied base project to ${cwd}`);
 
   return {
     name,

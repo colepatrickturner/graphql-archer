@@ -13,13 +13,8 @@ function getGraphqlServerOptions(state) {
 function scaffoldProject({ cwd }, { name, templateDir }) {
   if (templateDir) {
     const templatePath = path.resolve(templateDir);
-    fs.copy(templatePath, cwd, err => {
-      if (err) {
-        fail(err.message);
-      }
-
-      success(`Copied ${name} files to ${cwd}`);
-    });
+    fs.copySync(templatePath, cwd);
+    success(`Copied ${name} files to ${cwd}`);
   }
 }
 

@@ -4,7 +4,7 @@ import { success, fail } from '../../lib/output';
 import { toFileSystemName, createProject } from '../../lib/Project';
 import * as Questions from '../../lib/commands/create/questions';
 import inquire, { QUESTION, ANSWER } from '../../lib/effects/inquire';
-import { put, call, takeEvery, waitForAnswerTo } from '../../lib/effects';
+import { put, takeEvery, waitForAnswerTo } from '../../lib/effects';
 
 export const QUESTION_PROJECT_NAME = Symbol();
 export const QUESTION_IS_NAME_GOOD = Symbol();
