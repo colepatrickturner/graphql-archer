@@ -51,8 +51,20 @@ export function getPackageName() {
   return name;
 }
 
+export function getFileSpaces() {
+  return parseInt(settings.indent) || 2;
+}
+
 export function toFileSystemName(name) {
   return name.replace(/[^a-zA-Z0-9-]/g, '');
+}
+
+export function updateJSONFile(file, updater) {
+  // TODO: Find a way to retain comments, AST parsing?
+  const json = shush(file);
+  const mutatedJSON = updater(json);
+
+  fs.writeFile(file, JSON.stringify(mutatedJSON, null, 2));
 }
 
 export function createProject(name) {
@@ -68,6 +80,15 @@ export function createProject(name) {
   const templatePath = path.resolve(path.join(__dirname), '../../template/');
   fs.copySync(templatePath, cwd);
   success(`Copied base project to ${cwd}`);
+
+  // Modify package.json
+  const packageDotJSON = path.resolve(path.join(cwd, 'package.json'));
+  updateJSONFile(packageDotJSON, json => {
+    return {
+      ...json,
+      name,
+    };
+  });
 
   return {
     name,

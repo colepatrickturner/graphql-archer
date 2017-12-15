@@ -7,7 +7,7 @@ import {
   inquire,
   waitForAnswerTo,
 } from 'graphql-archer/src/effects';
-import { SCAFFOLD_PROJECT } from 'graphql-archer/src/sagas/project/create';
+import { SCAFFOLD_PROJECT } from 'graphql-archer/src/commands/create/saga';
 import { success } from 'graphql-archer/src/lib/output';
 
 function getGraphqlServerOptions(state) {
