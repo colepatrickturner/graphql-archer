@@ -10,15 +10,25 @@ export default function serverReducer(state = initialState, action) {
   }
 }
 
-function getStateWithNewServer(state, { name, templateDir, value }) {
+function getStateWithNewServer(
+  state,
+  { name, dependencies, devDependencies, templateDir, middleware, value }
+) {
   if (!name || !value) {
     throw new Error('Invalid name or value specified to ADD_SERVER_CHOICE');
   }
 
-  const servers = [...state.servers].concat({ name, templateDir, value });
+  const servers = [...state.servers].concat({
+    name,
+    dependencies,
+    devDependencies,
+    templateDir,
+    middleware,
+    value,
+  });
 
   return {
     ...state,
-    servers
+    servers,
   };
 }
