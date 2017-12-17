@@ -1,2 +1,2 @@
 export schema from './schema.graphql';
-export resolver from './resolvers';
+export * as resolvers from './resolvers';

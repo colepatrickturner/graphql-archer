@@ -10,6 +10,7 @@ const injectServerChoice = put({
   dependencies: {
     'apollo-server-express': '^1',
     'body-parser': '^1',
+    'babel-cli': '^6',
     graphql: '^0.11.0',
     'graphql-tools': '^2',
     'graphql-import': '^0.1.5'
