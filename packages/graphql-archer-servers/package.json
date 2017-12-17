@@ -1,6 +1,6 @@
 {
   "name": "graphql-archer-servers",
-  "version": "0.0.1-0",
+  "version": "0.0.1-1",
   "description": "GraphQL Archer plugin for choosing a server framework.",
   "main": "index.js",
   "scripts": {
