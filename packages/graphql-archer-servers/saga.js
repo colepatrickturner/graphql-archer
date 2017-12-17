@@ -1,28 +1,41 @@
 import fs from 'fs-extra';
 import path from 'path';
+import merge from 'lodash.mergewith';
 import { CHOOSE_SERVER } from './constants';
 import {
   takeEvery,
   select,
   inquire,
+  put,
   waitForAnswerTo,
 } from 'graphql-archer/src/effects';
 import { SCAFFOLD_PROJECT } from 'graphql-archer/src/commands/create/saga';
 import { success } from 'graphql-archer/src/lib/output';
-import { updateJSONFile } from '../../src/lib/util';
+import { updateJSONFile } from 'graphql-archer/src/lib/util';
 
 function getGraphqlServerOptions(state) {
   return state['graphql-archer-servers'].servers;
 }
 
+function deepMergeCustomizer(obj, src) {
+  if (Array.isArray(obj)) {
+    return obj.concat(src);
+  } else if (typeof obj === 'object' && typeof src === 'object') {
+    return merge(obj, src, deepMergeCustomizer);
+  }
+
+  return src;
+}
+
 function scaffoldProject(
   { cwd },
-  { name, dependencies, devDependencies, templateDir, middleware }
+  { name, archerRC, dependencies, devDependencies, templateDir, middleware }
 ) {
   const middlewareConfigFile = path.resolve(
     path.join(cwd, 'config/middleware.json')
   );
   const packageJSONFile = path.resolve(path.join(cwd, 'package.json'));
+  const archerRCFile = path.resolve(path.join(cwd, '.archerrc'));
 
   // Copy files
   if (templateDir) {
@@ -63,6 +76,12 @@ function scaffoldProject(
     .map(Object.keys)
     .reduce((a, b) => a.concat(b));
   success(`Adding packages: ${packageNames.join(', ')}`);
+
+  if (typeof archerRC === 'object') {
+    updateJSONFile(archerRCFile, json => {
+      return merge(json, archerRC, deepMergeCustomizer);
+    });
+  }
 }
 
 export function addPackageObjects(packageJSONFile, objects) {
@@ -97,6 +116,11 @@ export function* askQuestion({ project }) {
 
     const config = choices.find(option => option.value === choice);
     scaffoldProject(project, config);
+
+    yield put({
+      type: CHOOSE_SERVER,
+      choice,
+    });
 
     break;
   }

@@ -12,7 +12,7 @@ export default function serverReducer(state = initialState, action) {
 
 function getStateWithNewServer(
   state,
-  { name, dependencies, devDependencies, templateDir, middleware, value }
+  { name, archerRC, dependencies, devDependencies, templateDir, middleware, value }
 ) {
   if (!name || !value) {
     throw new Error('Invalid name or value specified to ADD_SERVER_CHOICE');
@@ -20,6 +20,7 @@ function getStateWithNewServer(
 
   const servers = [...state.servers].concat({
     name,
+    archerRC,
     dependencies,
     devDependencies,
     templateDir,
