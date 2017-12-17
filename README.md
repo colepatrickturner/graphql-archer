@@ -5,9 +5,6 @@
 ```sh
 $ graphql-archer create example-app
 - 🏹 Creating application "example-app"
-[?] Do you want to use *yarn* or *npm*?
- > Yarn
-   NPM
 
 - Installing packages...
 - Done! 🏹
@@ -66,11 +63,3 @@ $ A...
  
 - Done! 🏹
 ```
-
-### Packages to use:
-- apollo-server
-- create-index
-
-## Todo
-- [Commander.js](https://github.com/tj/commander.js/)
-- [Inquirer.js](https://github.com/SBoudrias/Inquirer.js#documentation)
