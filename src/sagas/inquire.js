@@ -1,6 +1,10 @@
 import inquirer from 'inquirer';
 import { put, takeEvery } from '../effects';
 import { QUESTION, ANSWER } from '../effects/inquire';
+inquirer.registerPrompt(
+  'autocomplete',
+  require('inquirer-autocomplete-prompt')
+);
 
 export default function* projectSaga() {
   yield [

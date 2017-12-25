@@ -8,8 +8,8 @@ import projectSaga from './project';
 export default function* saga() {
   const pluginSagaObject = getPluginSagasObject();
   const sagas = [
-    fork(projectSaga),
     fork(inquireSaga),
+    fork(projectSaga),
     ...Object.values(pluginSagaObject).map(saga => fork(saga)),
   ];
 

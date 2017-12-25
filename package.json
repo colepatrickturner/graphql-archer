@@ -34,9 +34,11 @@
   "homepage": "https://github.com/colepatrickturner/graphql-archer#readme",
   "dependencies": {
     "babel-eslint": "^8.0.3",
+    "camelcase": "^4.1.0",
     "chalk": "^2.3.0",
     "commander": "^2.12.2",
     "inquirer": "^4.0.1",
+    "inquirer-autocomplete-prompt": "^0.12.1",
     "lodash.mergewith": "^4.6.0",
     "mkdirp": "^0.5.1",
     "node-fs-extra": "^0.8.2",
@@ -45,7 +47,9 @@
     "program": "^1.0.0",
     "redux": "^3.7.2",
     "redux-saga": "^0.16.0",
-    "shush": "^1.0.0"
+    "shush": "^1.0.0",
+    "to-pascal-case": "^1.0.0",
+    "turtler": "^0.0.2"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",

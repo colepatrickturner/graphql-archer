@@ -18,5 +18,7 @@
   "bugs": {
     "url": "https://github.com/colepatrickturner/graphql-archer/issues"
   },
-  "homepage": "https://github.com/colepatrickturner/graphql-archer#readme"
+  "homepage": "https://github.com/colepatrickturner/graphql-archer#readme",
+  "dependencies": {
+  }
 }

@@ -1,10 +1,14 @@
 import shush from 'shush';
 import chalk from 'chalk';
 import path from 'path';
-import { fail } from './output';
-import packageJSON from '../../package.json';
 import fs from 'fs-extra';
 import mkdirp from 'mkdirp';
+import merge from 'lodash.mergewith';
+import { fail } from './output';
+import packageJSON from '../../package.json';
+import toPascalCase from 'to-pascal-case';
+import toCamelCase from 'camelcase';
+
 import { success } from '../lib/output';
 
 const { name, version } = packageJSON;
@@ -55,8 +59,16 @@ export function getFileSpaces() {
   return parseInt(settings.indent) || 2;
 }
 
-export function toFileSystemName(name) {
-  return name.replace(/[^a-zA-Z0-9-]/g, '');
+export function toFileSystemName(str) {
+  return str.replace(/[^a-zA-Z0-9-]/g, '');
+}
+
+export function toGraphQLTypeName(str) {
+  return toPascalCase(str.replace(/[^a-zA-Z0-9]/g, ''));
+}
+
+export function toGraphQLFieldName(str) {
+  return toCamelCase(str.replace(/[^a-zA-Z0-9]/g, ''));
 }
 
 export function updateJSONFile(file, updater) {
@@ -94,4 +106,36 @@ export function createProject(name) {
     name,
     cwd,
   };
+}
+
+export function inProject() {
+  return fs.existsSync(path.resolve(path.join(process.cwd(), './.archerrc')));
+}
+
+export function addPackageObjects(packageJSONFile, objects) {
+  updateJSONFile(packageJSONFile, json => {
+    const data = { ...json };
+    Object.keys(objects).forEach(key => {
+      data[key] = {
+        ...data[key],
+        ...objects[key],
+      };
+    });
+
+    return data;
+  });
+}
+
+function deepMergeCustomizer(obj, src) {
+  if (Array.isArray(obj)) {
+    return obj.concat(src);
+  } else if (typeof obj === 'object' && typeof src === 'object') {
+    return merge(obj, src, deepMergeCustomizer);
+  }
+
+  return src;
+}
+
+export function deepMerge(a, b) {
+  return merge(a, b, deepMergeCustomizer);
 }

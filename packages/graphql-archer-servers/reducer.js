@@ -12,7 +12,16 @@ export default function serverReducer(state = initialState, action) {
 
 function getStateWithNewServer(
   state,
-  { name, archerRC, dependencies, devDependencies, templateDir, middleware, value }
+  {
+    name,
+    archerRC,
+    dependencies,
+    devDependencies,
+    entities,
+    templateDir,
+    middleware,
+    value,
+  }
 ) {
   if (!name || !value) {
     throw new Error('Invalid name or value specified to ADD_SERVER_CHOICE');
@@ -23,6 +32,7 @@ function getStateWithNewServer(
     archerRC,
     dependencies,
     devDependencies,
+    entities,
     templateDir,
     middleware,
     value,

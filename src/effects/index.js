@@ -9,4 +9,5 @@ export {
   takeLatest,
 } from 'redux-saga/effects';
 export inquire from './inquire';
+export namePicker from './namePicker';
 export waitForAnswerTo from './waitForAnswerTo';
