@@ -3,6 +3,7 @@ import storeFactory from './store';
 import storage from 'node-persist';
 import { registerCommands } from './commands';
 import { getPackageVersion } from './lib/util';
+import { SIGINT } from 'constants';
 
 const store = storeFactory(program);
 
@@ -15,6 +16,10 @@ function run() {
   if (!program.args.length) {
     program.outputHelp();
   }
+
+  process.on('SIGINT', () => {
+    store.dispatch({ type: SIGINT });
+  });
 }
 
 storage.init().then(run);

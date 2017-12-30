@@ -1,3 +1,4 @@
+/* eslint no-console: 0 */
 import chalk from 'chalk';
 
 export const defaultTextProcessor = str => str;
@@ -28,3 +29,4 @@ export const warn = createColoredOutput(chalk.yellow);
 export const fail = createColoredOutput(chalk.red);
 export const debug = createColoredOutput(chalk.yellow);
 export const success = createColoredOutput(chalk.green);
+export const printEmptyRow = () => console.info('');

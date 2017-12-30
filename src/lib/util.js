@@ -64,11 +64,23 @@ export function toFileSystemName(str) {
 }
 
 export function toGraphQLTypeName(str) {
-  return toPascalCase(str.replace(/[^a-zA-Z0-9]/g, ''));
+  return toPascalCase(
+    str
+      .replace(/^[0-9]/, '') // remove leading numbers
+      .replace(/[^a-zA-Z0-9]/g, '') // remove non alphanumeric characters
+  );
 }
 
 export function toGraphQLFieldName(str) {
   return toCamelCase(str.replace(/[^a-zA-Z0-9]/g, ''));
+}
+
+export function getGraphQLBaseType(type) {
+  if ('type' in type) {
+    return getGraphQLBaseType(type.type);
+  }
+
+  return type;
 }
 
 export function updateJSONFile(file, updater) {
@@ -138,4 +150,17 @@ function deepMergeCustomizer(obj, src) {
 
 export function deepMerge(a, b) {
   return merge(a, b, deepMergeCustomizer);
+}
+
+export function getTruthySorter(defaultValue) {
+  return (a, b) => {
+    const x = a.value === defaultValue;
+    const y = b.value === defaultValue;
+
+    if (x === y) {
+      return 0;
+    }
+
+    return x ? -1 : 1;
+  };
 }

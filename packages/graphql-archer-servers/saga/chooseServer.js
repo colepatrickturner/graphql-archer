@@ -8,8 +8,7 @@ import {
 import { CHOOSE_SERVER } from '../constants';
 import { getGraphqlServerOptions, scaffoldServer } from '../util';
 
-
-export default function* chooseServer({ message = 'Choose a GraphQL Server:' }) {
+export function* chooseServer({ message } = { message: 'Choose a GraphQL Server:' }) {
   const choices = yield select(getGraphqlServerOptions);
   yield inquire(CHOOSE_SERVER, {
     type: 'list',
@@ -18,11 +17,11 @@ export default function* chooseServer({ message = 'Choose a GraphQL Server:' }) 
     choices: choices,
   });
 
-  const choice = yield waitForAnswerTo(CHOOSE_SERVER);
-  return yield choices.find(option => option.value === choice);
+  const { choice } = yield waitForAnswerTo(CHOOSE_SERVER);
+  return choices.find(option => option.value === choice);
 }
 
-export function* askQuestion({ project }) {
+export default function* chooseServerToScaffoldSaga({ project }) {
   while (true) {
     const choice = yield call(chooseServer);
     if (!choice) {

@@ -7,6 +7,7 @@ export default function* namePicker({
   message = 'Please enter a name...',
   formatter = n => n,
   getConfirmMessage = name => chalk.yellow(`Use name "${chalk.cyan(name)}"?`),
+  ...otherProps
 }) {
   let name = null;
   while (true) {
@@ -15,6 +16,7 @@ export default function* namePicker({
         type: 'input',
         name: 'name',
         message,
+        ...otherProps,
       });
 
       const answer = yield waitForAnswerTo(QUESTION_NAME);

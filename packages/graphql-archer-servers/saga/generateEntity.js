@@ -9,7 +9,7 @@ import { success, fail } from 'graphql-archer/src/lib/output';
 import { inProject } from 'graphql-archer/src/lib/util';
 import { QUESTION_ENTITY_TYPE, ENTITY_TYPES } from '../constants';
 import { getGraphqlServerOptions } from '../util';
-import chooseServer from './chooseServer';
+import { chooseServer } from './chooseServer';
 import * as entityGenerators from './entities';
 
 
