@@ -62,7 +62,7 @@ export default function* generateEntitySaga(action) {
       continue;
     }
 
-    yield entityGenerators[entity]();
+    yield call(entityGenerators[entity]);
 
     break;
   }

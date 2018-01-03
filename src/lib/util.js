@@ -164,3 +164,7 @@ export function getTruthySorter(defaultValue) {
     return x ? -1 : 1;
   };
 }
+
+export function getSchemaPath() {
+  return settings.schemaPath || './src/schema/';
+}

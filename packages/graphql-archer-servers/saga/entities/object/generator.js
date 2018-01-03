@@ -13,6 +13,7 @@ import {
   toGraphQLFieldName,
   getGraphQLBaseType,
   getTruthySorter,
+  getSchemaPath,
 } from 'graphql-archer/src/lib/util';
 import {
   QUESTION_ENTITY_DESCRIPTION,
@@ -20,13 +21,72 @@ import {
   QUESTION_FIELD_TYPE,
   CONFIRM_FIELD_REMOVAL,
   SCALARS,
-} from '../../constants';
+} from '../../../constants';
 import {
   info,
   fail,
   success,
   printEmptyRow,
 } from 'graphql-archer/src/lib/output';
+import scaffoldObjectType from '../../../util/scaffold';
+
+export default function* objectGenerator() {
+  let objectName = false;
+  let description = false;
+  // TODO - Load existing schema, if exists
+  let fields = [];
+
+  // 1. Check if name is set
+  while (!objectName) {
+    objectName = yield getName();
+    continue;
+  }
+
+  // 2. Check if description is set
+  while (!description) {
+    description = yield getDescription({ name: objectName });
+  }
+
+  // 3. Manage schema
+  while (true) {
+    // 3.a Print the current schema
+    yield printSchema(objectName, fields);
+
+    const additionalOptions = getAdditionalObjectOptions({ fields });
+
+    // 3.b Display options
+    yield inquire(QUESTION_ENTITY_OPTIONS, {
+      type: 'list',
+      message: 'Choose an option',
+      name: 'option',
+      choices: [
+        {
+          name: 'Add a field',
+          value: ADD,
+        },
+        ...additionalOptions,
+      ],
+    });
+
+    // 3.c Respond to option
+    const { option } = yield waitForAnswerTo(QUESTION_ENTITY_OPTIONS);
+    fields = yield reduceFieldState(fields, { option, objectName });
+
+    // 3.d Save, if finished
+    if (doesActionSaveFields({ option })) {
+      const basePath = getSchemaPath();
+      yield call(scaffoldObjectType, { basePath, objectName, fields });
+    }
+
+    // 3.e Exit, if cancelling or finished
+    if (doesActionCancel({ option })) {
+      if (!fields.length) {
+        info('OK, cancelling generator...');
+      }
+      break;
+    }
+  }
+}
 
 export function getName() {
   return namePicker({
@@ -354,58 +414,6 @@ export function getAdditionalObjectOptions({ fields }) {
   }
 
   return MULTIPLE_FIELD_OPTIONS;
-}
-
-export default function* objectGenerator() {
-  let objectName = false;
-  let description = false;
-  let fields = [];
-
-  // Check if name is set
-  while (!objectName) {
-    objectName = yield getName();
-    continue;
-  }
-
-  // Check if description is set
-  while (!description) {
-    description = yield getDescription({ name: objectName });
-  }
-
-  // Manage schema
-  while (true) {
-    // Print the current schema
-    yield printSchema(objectName, fields);
-
-    const additionalOptions = getAdditionalObjectOptions({ fields });
-
-    yield inquire(QUESTION_ENTITY_OPTIONS, {
-      type: 'list',
-      message: 'Choose an option',
-      name: 'option',
-      choices: [
-        {
-          name: 'Add a field',
-          value: ADD,
-        },
-        ...additionalOptions,
-      ],
-    });
-
-    const { option } = yield waitForAnswerTo(QUESTION_ENTITY_OPTIONS);
-    fields = yield reduceFieldState(fields, { option, objectName });
-
-    if (doesActionSaveFields({ option })) {
-      // scaffoldObjectType({ objectName, fields });
-    }
-
-    if (doesActionCancel({ option })) {
-      if (!fields.length) {
-        info('OK, cancelling generator...');
-      }
-      break;
-    }
-  }
 }
 
 export function doesActionSaveFields({ option }) {

@@ -5,6 +5,7 @@ export const QUESTION_ENTITY_DESCRIPTION = Symbol();
 export const QUESTION_ENTITY_OPTIONS = Symbol();
 export const QUESTION_FIELD_TYPE = Symbol();
 export const CONFIRM_FIELD_REMOVAL = Symbol();
+export const GENERATE_OBJECT = Symbol('GENERATE OBJECT');
 
 export const ENTITY_TYPES = Object.freeze({
   object: 'Object Type',
