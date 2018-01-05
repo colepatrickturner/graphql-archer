@@ -4,6 +4,7 @@ import turtler from 'turtler';
 import { parse as parseGraphQL } from 'graphql';
 import {
   call,
+  put,
   inquire,
   namePicker,
   waitForAnswerTo,
@@ -21,6 +22,7 @@ import {
   QUESTION_FIELD_TYPE,
   CONFIRM_FIELD_REMOVAL,
   SCALARS,
+  GENERATE_OBJECT,
 } from '../../../constants';
 import {
   info,
@@ -28,7 +30,6 @@ import {
   success,
   printEmptyRow,
 } from 'graphql-archer/src/lib/output';
-import scaffoldObjectType from '../../../util/scaffold';
 
 export default function* objectGenerator() {
   let objectName = false;
@@ -74,8 +75,15 @@ export default function* objectGenerator() {
 
     // 3.d Save, if finished
     if (doesActionSaveFields({ option })) {
-      const basePath = getSchemaPath();
-      yield call(scaffoldObjectType, { basePath, objectName, fields });
+      const schemaPath = getSchemaPath();
+
+      yield put({
+        type: GENERATE_OBJECT,
+        objectName,
+        description,
+        fields,
+        schemaPath
+      });
     }
 
     // 3.e Exit, if cancelling or finished
@@ -176,7 +184,8 @@ export function* getFieldType({ fieldName, defaultValue }) {
   const sortedScalars = SCALARS.slice().map(scalar => {
     return {
       ...scalar,
-      name: scalar.name === defaultValue ? chalk.grey(defaultValue) : scalar.name
+      name:
+        scalar.name === defaultValue ? chalk.grey(defaultValue) : scalar.name,
     };
   });
 
@@ -236,7 +245,7 @@ export function* getFullyQualifiedFieldType({ fieldName, type, defaultValue }) {
       value: `[${type}!]!`,
     },
   ].sort(getTruthySorter(defaultValue));
-  
+
   yield inquire(QUESTION_FIELD_TYPE, {
     type: 'list',
     message: chalk.yellow(
@@ -244,10 +253,10 @@ export function* getFullyQualifiedFieldType({ fieldName, type, defaultValue }) {
     ),
     name: 'choice',
     choices: sortedFieldTypes.map(t => {
-        return {
-          ...t,
-          name: t.value === defaultValue ? chalk.grey(defaultValue) : t.name
-        };
+      return {
+        ...t,
+        name: t.value === defaultValue ? chalk.grey(defaultValue) : t.name,
+      };
     }),
   });
 
