@@ -1,65 +1,31 @@
 # graphql-archer
-(Concept): Node cli for generating an Apollo server and bootstrapping your schema.
 
-## Concept
+(WIP): Node cli for generating an Apollo server and bootstrapping your schema.
+
+## Demo
+
+![Exaple output for program](demo.png)
+
 ```sh
-$ graphql-archer create example-app
-- 🏹 Creating application "example-app"
+cole@Sol tmp $ graphql-archer create
+? Please enter a name... example-app
+🏹   Creating project with name: example-app
+🏹   Copied base project to /private/tmp/example-app
+? Choose a GraphQL Server: Apollo Server
+🏹   Copied Apollo Server files to /private/tmp/example-app
+🏹   Installing middleware: graphql, graphiql
+🏹   Adding packages: apollo-server-express, body-parser, babel-cli, graphql, graphql-tools, graphql-import, graphql-archer-apollo-server
+cole@Sol example-app $ graphql-archer generate object
+🏹   Using server plugin: Apollo Server
+? Name your Object Type... ExampleType
+? Please describe "ExampleType"... It's just an example
 
-- Installing packages...
-- Done! 🏹
-
-$ cd ./example-app
-$ graphql-archer g type
-- 🏹 Generate a GraphQL type
-
-[?] Please choose one:
- > Object Type
-   Input Type
-   Enum Type
-   Union Type
-   Scalar
-   
-[?] 🏹 Give your new *Object Type* a name:
- Name: MyObject
-   
-[?] 🏹 Describe *MyObject*:
- Description: It's my object yo...
-
-[?] Type: MyObject (Aerdh)
-- Fields: (none)
-   A) Add new field
-   e) Modify a field
-   r) Remove a field
-   f) Finish
-   h) Help
-$ A...
-
-[?] Enter field name: ... theTitle
-
-- MyObject > theTitle
-[?] Choose a type kind for this field:
-   > * String
-     * ID
-     * Integer
-     * Float
-     * Boolean
-     + MyObject
-
-  ( ) Nullable    (•) Non-nullable   ( ) Nullable List   ( ) Non-nullable List
-
-- MyObject > theTitle (String!)
-[?] Describe this field: ... It's the title yo!
-
-- Generating ./graphql/types/MyObject.js
-  Name: MyObject
-  Description: It's my object yo...
-  Fields:
-  ------------------------------------------
-  name       | description         | type
-  ------------------------------------------
-  theTitle   | It's the title yo!  | String!
-  ------------------------------------------
- 
-- Done! 🏹
+🏹   Object: ExampleType
+===========================
+(no fields)
+===========================
+? Choose an option (Use arrow keys)
+❯ Add a field
+  ──────────────
+  Cancel
 ```
