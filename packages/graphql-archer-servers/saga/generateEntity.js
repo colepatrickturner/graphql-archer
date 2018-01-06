@@ -62,6 +62,10 @@ export default function* generateEntitySaga(action) {
       continue;
     }
 
+    if (!(entity in entityGenerators)) {
+      return fail(`Unable to find generator "${entity}"`);
+    }
+
     yield call(entityGenerators[entity]);
 
     break;

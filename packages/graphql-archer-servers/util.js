@@ -1,3 +1,4 @@
+import chalk from 'chalk';
 import fs from 'fs-extra';
 import path from 'path';
 import { success, fail } from 'graphql-archer/src/lib/output';
@@ -25,7 +26,7 @@ export function scaffoldServer(
   if (templateDir) {
     const templatePath = path.resolve(templateDir);
     fs.copySync(templatePath, cwd);
-    success(`Copied ${name} files to ${cwd}`);
+    success(`Copied ${name} files to ${chalk.magenta(cwd)}`);
   }
 
   // Install middleware configuration

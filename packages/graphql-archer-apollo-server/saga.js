@@ -19,6 +19,7 @@ import {
   takeEvery,
   inquire,
   waitForAnswerTo,
+  tryAgain,
 } from 'graphql-archer/src/effects';
 import {
   success,
@@ -26,10 +27,12 @@ import {
   info,
   printEmptyRow,
 } from 'graphql-archer/src/lib/output';
+import { getDependencyPackageVersion } from 'graphql-archer/src/lib/util';
 import {
   ADD_SERVER_CHOICE,
   GENERATE_OBJECT,
 } from 'graphql-archer-servers/constants';
+import importSchema from './importSchema';
 
 const injectServerChoice = put({
   type: ADD_SERVER_CHOICE,
@@ -45,7 +48,9 @@ const injectServerChoice = put({
     'graphql-import': '^0.1.5',
   },
   devDependencies: {
-    'graphql-archer-apollo-server': '^1',
+    'graphql-archer-apollo-server': getDependencyPackageVersion(
+      'graphql-archer-apollo-server'
+    ),
   },
   archerRC: {
     schemaPath: './src/schema/',
@@ -77,14 +82,19 @@ const injectServerChoice = put({
   ],
 });
 
-export function createObjectType({ objectName: name, description, fields }) {
-  // TODO: import existing schema
-  const schema = null;
+export function* createObjectType({
+  schemaPath,
+  objectName: name,
+  description,
+  fields,
+}) {
+  const schema = yield call(importSchema, schemaPath);
 
-  return new GraphQLObjectType({
+  return yield new GraphQLObjectType({
     name,
     fields: fields.reduce((obj, field) => {
       const { description, type } = field;
+
       return {
         ...obj,
         [field.name]: {
@@ -95,6 +105,37 @@ export function createObjectType({ objectName: name, description, fields }) {
     }, {}),
     description,
   });
+}
+
+export function* getSchemaString({
+  schemaPath,
+  objectName,
+  description,
+  fields,
+}) {
+  while (true) {
+    try {
+      const schematic = yield call(createObjectType, {
+        schemaPath,
+        objectName,
+        description,
+        fields,
+      });
+
+      return yield call(printType, schematic);
+    } catch (e) {
+      fail(`Unable to create object type, because: ${e.message}`);
+      const confirmed = yield tryAgain();
+
+      if (!confirmed) {
+        fail(`Cancelling - here's your blue print:`);
+        printEmptyRow();
+        info(JSON.stringify({ objectName, description, fields }, null, true));
+
+        break;
+      }
+    }
+  }
 }
 
 export function* writeSchema({ schemaPath, objectName, description, fields }) {
@@ -114,13 +155,12 @@ export function* writeSchema({ schemaPath, objectName, description, fields }) {
 
   // Write the schema file
   while (true) {
-    const schematic = yield call(createObjectType, {
+    const schemaString = yield call(getSchemaString, {
+      schemaPath,
       objectName,
       description,
       fields,
     });
-
-    const schemaString = yield call(printType, schematic);
 
     try {
       writeFileSync(relativeSchemaFile, schemaString);
@@ -128,15 +168,9 @@ export function* writeSchema({ schemaPath, objectName, description, fields }) {
     } catch (e) {
       fail(`Unable to write to ${relativeSchemaFile}:\n${e.message}`);
 
-      yield inquire(INQUIRE_TRY_AGAIN, {
-        type: 'confirm',
-        name: 'tryAgain',
-        message: `Would you like to try again?`,
-      });
+      const confirmed = yield tryAgain();
 
-      const { tryAgain } = yield waitForAnswerTo(INQUIRE_TRY_AGAIN);
-
-      if (!tryAgain) {
+      if (!confirmed) {
         fail(`Cancelling - here's your schema definition:`);
         printEmptyRow();
         info(schemaString);
@@ -181,13 +215,13 @@ export function* writeIndexFile({ schemaPath, objectName }) {
     info(`An index already exists @ ${folderPath}`);
     yield inquire(INQUIRE_REWRITE_INDEX, {
       type: 'confirm',
-      name: 'tryAgain',
+      name: 'proceed',
       message: `Do you want to recreate the exports index?`,
     });
 
-    const { tryAgain } = yield waitForAnswerTo(INQUIRE_REWRITE_INDEX);
+    const { proceed } = yield waitForAnswerTo(INQUIRE_REWRITE_INDEX);
 
-    if (!tryAgain) {
+    if (!proceed) {
       info(`OK - Skipping...`);
       printEmptyRow();
       return;

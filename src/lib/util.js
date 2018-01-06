@@ -103,7 +103,7 @@ export function createProject(name) {
   // Copy our root template
   const templatePath = path.resolve(path.join(__dirname), '../../template/');
   fs.copySync(templatePath, cwd);
-  success(`Copied base project to ${cwd}`);
+  success(`Copied base project to ${chalk.magenta(cwd)}`);
 
   // Modify package.json
   const packageDotJSON = path.resolve(path.join(cwd, 'package.json'));
@@ -167,4 +167,16 @@ export function getTruthySorter(defaultValue) {
 
 export function getSchemaPath() {
   return settings.schemaPath || './src/schema/';
+}
+
+export function getDependencyPackageVersion(packageName) {
+  const packageJSON = shush(path.join(__dirname, '../../package.json'));
+
+  if (packageName in packageJSON.dependencies) {
+    return packageJSON.dependencies[packageName];
+  } else if (packageName in packageJSON.devDependencies) {
+    return packageJSON.devDependencies[packageName];
+  }
+
+  throw new Error(`Unable to find dependency package: ${packageName}`);
 }
