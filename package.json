@@ -1,13 +1,14 @@
 {
   "name": "graphql-archer",
   "version": "0.0.1",
-  "description": "Node cli for generating a graphql project and boostrapping schema",
+  "description":
+    "Node cli for generating a graphql project and boostrapping schema",
   "main": "index.js",
   "bin": {
     "graphql-archer": "./bin/graphql-archer"
   },
   "lint-staged": {
-    "src/**/*.{js,jsx,json,scss,css}": [
+    "*.{js,jsx,json,scss,css,md}": [
       "prettier --config .prettierrc --write",
       "git add"
     ]
@@ -21,11 +22,7 @@
     "type": "git",
     "url": "git+https://github.com/colepatrickturner/graphql-archer.git"
   },
-  "keywords": [
-    "node",
-    "graphql",
-    "apollo"
-  ],
+  "keywords": ["node", "graphql", "apollo"],
   "author": "Cole Turner",
   "license": "ISC",
   "bugs": {
