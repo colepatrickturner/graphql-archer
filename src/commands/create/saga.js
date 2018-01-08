@@ -12,9 +12,11 @@ export default function* createProjectSaga(action) {
   let { name } = action;
 
   while (true) {
-    name = yield namePicker({
-      formatter: toFileSystemName,
-    });
+    if (!name) {
+      name = yield namePicker({
+        formatter: toFileSystemName,
+      });
+    }
 
     // Kick off the creation event loop
     success(chalk.white('Creating project with name:'), name);

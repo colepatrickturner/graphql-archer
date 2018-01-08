@@ -21,6 +21,7 @@ function getStateWithNewServer(
     templateDir,
     middleware,
     value,
+    getSchema,
   }
 ) {
   if (!name || !value) {
@@ -36,6 +37,7 @@ function getStateWithNewServer(
     templateDir,
     middleware,
     value,
+    getSchema,
   });
 
   return {

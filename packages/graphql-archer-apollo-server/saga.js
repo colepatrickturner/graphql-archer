@@ -7,7 +7,6 @@ import path from 'path';
 import { GraphQLObjectType, typeFromAST, parseType, printType } from 'graphql';
 import {
   KEY,
-  INQUIRE_TRY_AGAIN,
   TYPE_DIRECTORY,
   SCHEMA_FILE_NAME,
   RESOLVER_FILE_NAME,
@@ -32,7 +31,7 @@ import {
   ADD_SERVER_CHOICE,
   GENERATE_OBJECT,
 } from 'graphql-archer-servers/constants';
-import importSchema from './importSchema';
+import getSchema from './getSchema';
 
 const injectServerChoice = put({
   type: ADD_SERVER_CHOICE,
@@ -80,16 +79,15 @@ const injectServerChoice = put({
       },
     },
   ],
+  getSchema,
 });
 
 export function* createObjectType({
-  schemaPath,
+  schema,
   objectName: name,
   description,
   fields,
 }) {
-  const schema = yield call(importSchema, schemaPath);
-
   return yield new GraphQLObjectType({
     name,
     fields: fields.reduce((obj, field) => {
@@ -107,16 +105,11 @@ export function* createObjectType({
   });
 }
 
-export function* getSchemaString({
-  schemaPath,
-  objectName,
-  description,
-  fields,
-}) {
+export function* getObjectSDL({ schema, objectName, description, fields }) {
   while (true) {
     try {
       const schematic = yield call(createObjectType, {
-        schemaPath,
+        schema,
         objectName,
         description,
         fields,
@@ -124,7 +117,7 @@ export function* getSchemaString({
 
       return yield call(printType, schematic);
     } catch (e) {
-      fail(`Unable to create object type, because: ${e.message}`);
+      fail(`Unable to create object type, because:\n${e.message}`);
       const confirmed = yield tryAgain();
 
       if (!confirmed) {
@@ -138,7 +131,13 @@ export function* getSchemaString({
   }
 }
 
-export function* writeSchema({ schemaPath, objectName, description, fields }) {
+export function* writeSchema({
+  schemaPath,
+  schema,
+  objectName,
+  description,
+  fields,
+}) {
   const relativeSchemaFile = path.join(
     schemaPath,
     TYPE_DIRECTORY,
@@ -148,15 +147,15 @@ export function* writeSchema({ schemaPath, objectName, description, fields }) {
 
   yield call(
     success,
-    `Generating object type ${chalk.magenta(objectName)} at ${chalk.magenta(
-      relativeSchemaFile
-    )}`
+    `Generating type definition for ${chalk.magenta(
+      objectName
+    )} at ${chalk.magenta(relativeSchemaFile)}`
   );
 
   // Write the schema file
   while (true) {
-    const schemaString = yield call(getSchemaString, {
-      schemaPath,
+    const schemaString = yield call(getObjectSDL, {
+      schema,
       objectName,
       description,
       fields,
@@ -191,7 +190,7 @@ export function* writeResolver({ schemaPath, objectName, fields }) {
 
   yield call(
     success,
-    `Generating object type ${chalk.magenta(objectName)} at ${chalk.magenta(
+    `Generating resolvers for ${chalk.magenta(objectName)} at ${chalk.magenta(
       relativeSchemaFile
     )}`
   );
@@ -209,7 +208,7 @@ export function* makeFolder({ schemaPath, objectName }) {
 
 export function* writeIndexFile({ schemaPath, objectName }) {
   const folderPath = path.join(schemaPath, TYPE_DIRECTORY, objectName);
-  success(`Running create-index to make ${folderPath}/index.js`);
+  success(`Generating exports at ${chalk.magenta(`${folderPath}/index.js`)}`);
 
   if (hasIndex(folderPath)) {
     info(`An index already exists @ ${folderPath}`);

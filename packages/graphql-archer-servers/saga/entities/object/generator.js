@@ -14,7 +14,6 @@ import {
   toGraphQLFieldName,
   getGraphQLBaseType,
   getTruthySorter,
-  getSchemaPath,
 } from 'graphql-archer/src/lib/util';
 import {
   QUESTION_ENTITY_DESCRIPTION,
@@ -31,7 +30,7 @@ import {
   printEmptyRow,
 } from 'graphql-archer/src/lib/output';
 
-export default function* objectGenerator() {
+export default function* objectGenerator({ schema, schemaPath }) {
   let objectName = false;
   let description = false;
   // TODO - Load existing schema, if exists
@@ -75,14 +74,13 @@ export default function* objectGenerator() {
 
     // 3.d Save, if finished
     if (doesActionSaveFields({ option })) {
-      const schemaPath = getSchemaPath();
-
       yield put({
         type: GENERATE_OBJECT,
+        schema,
         objectName,
         description,
         fields,
-        schemaPath
+        schemaPath,
       });
     }
 

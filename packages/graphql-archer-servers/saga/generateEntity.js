@@ -4,17 +4,28 @@ import {
   inquire,
   call,
   waitForAnswerTo,
+  tryAgain,
 } from 'graphql-archer/src/effects';
 import { success, fail } from 'graphql-archer/src/lib/output';
-import { inProject } from 'graphql-archer/src/lib/util';
+import { inProject, getSchemaPath } from 'graphql-archer/src/lib/util';
 import { QUESTION_ENTITY_TYPE, ENTITY_TYPES } from '../constants';
 import { getGraphqlServerOptions } from '../util';
 import { chooseServer } from './chooseServer';
 import * as entityGenerators from './entities';
 
+export async function getSchema(server, schemaPath) {
+  const importer = require(`${server.value}/getSchema`);
+  return importer(schemaPath);
+}
 
 export default function* generateEntitySaga(action) {
   let { server, entity } = action;
+  let schema;
+
+  const schemaPath = yield call(getSchemaPath);
+  const announceServer = ({ name }) =>
+    success(`${chalk.grey('Using server plugin:')} ${name}`);
+
   if (!inProject()) {
     return fail('No .archerrc detected - this is likely not a project folder.');
   }
@@ -24,7 +35,7 @@ export default function* generateEntitySaga(action) {
     return fail('No server plugins detected - cannot continue.');
   } else if (choices.length === 1) {
     server = choices[0];
-    success(`Using server plugin: ${server.name}`);
+    announceServer(server);
   }
 
   while (true) {
@@ -34,8 +45,34 @@ export default function* generateEntitySaga(action) {
 
       if (server) {
         success(`Using server plugin: ${server.name}`);
+        announceServer(server);
       }
       continue;
+    }
+
+    if (!schema) {
+      try {
+        schema = yield call(server.getSchema, schemaPath);
+      } catch (e) {
+        fail('Unable to import schema...');
+
+        if (
+          e.stack.includes('babel-register') &&
+          e.message.includes('.babelrc')
+        ) {
+          fail(`Reason: ${e.message}`);
+          fail(`Please make sure your project's node modules are installed.`);
+        } else {
+          fail(e.stack);
+        }
+
+        const confirmed = yield tryAgain();
+        if (confirmed) {
+          continue;
+        } else {
+          break;
+        }
+      }
     }
 
     // Require an entity type to continue
@@ -66,7 +103,7 @@ export default function* generateEntitySaga(action) {
       return fail(`Unable to find generator "${entity}"`);
     }
 
-    yield call(entityGenerators[entity]);
+    yield call(entityGenerators[entity], { schema, schemaPath });
 
     break;
   }

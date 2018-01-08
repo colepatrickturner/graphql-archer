@@ -27,6 +27,12 @@ export const createColoredOutput = colorer => {
 export const info = createColoredOutput(chalk.white);
 export const warn = createColoredOutput(chalk.yellow);
 export const fail = createColoredOutput(chalk.red);
-export const debug = createColoredOutput(chalk.yellow);
+export const debug = createColoredOutput((...args) => {
+  if (process.env.DEBUG) {
+    return chalk.grey(...args);
+  }
+
+  return null;
+});
 export const success = createColoredOutput(chalk.green);
 export const printEmptyRow = () => console.info('');

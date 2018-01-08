@@ -7,6 +7,10 @@ import { SIGINT } from 'constants';
 
 const store = storeFactory(program);
 
+if (process.argv.includes('--debug')) {
+  process.env.DEBUG = '*';
+}
+
 function run() {
   registerCommands({ program, storage, store })
     .option('-d, --debug', 'Enable debug info')

@@ -13,8 +13,15 @@ export function getGraphqlServerOptions(state) {
 }
 
 export function scaffoldServer(
-  { cwd },
-  { name, archerRC, dependencies, devDependencies, templateDir, middleware }
+  { name: projectName, cwd },
+  {
+    name: serverName,
+    archerRC,
+    dependencies,
+    devDependencies,
+    templateDir,
+    middleware,
+  }
 ) {
   const middlewareConfigFile = path.resolve(
     path.join(cwd, 'config/middleware.json')
@@ -26,7 +33,7 @@ export function scaffoldServer(
   if (templateDir) {
     const templatePath = path.resolve(templateDir);
     fs.copySync(templatePath, cwd);
-    success(`Copied ${name} files to ${chalk.magenta(cwd)}`);
+    success(`Copied ${serverName} files to ${chalk.magenta(cwd)}`);
   }
 
   // Install middleware configuration
@@ -67,5 +74,16 @@ export function scaffoldServer(
       return deepMerge(json, archerRC);
     });
   }
-}
 
+  success(`Finished!
+    ${chalk.yellow('To initialize your project do the following:')}
+    ${chalk.white(`cd ${projectName}`)}
+
+    ${chalk.grey('Install using your favorite package manager:')}
+    ${chalk.white(`npm install`)}
+    ${chalk.white(`yarn install`)}
+
+    ${chalk.grey('Start generating your schema:')}
+    ${chalk.white(`graphql-archer generate`)}
+  `);
+}
