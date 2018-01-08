@@ -1,0 +1,7 @@
+# import Query from "./types/Query/schema.graphql"
+# import Mutation from "./types/Mutation/schema.graphql"
+
+schema {
+  query: Query
+  mutation: Mutation
+}

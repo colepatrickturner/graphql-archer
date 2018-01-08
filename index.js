@@ -1,1 +1,2 @@
-export { default as default } from './src/program';
+export { default } from './src/program';
+export { extractResolvers } from './src/lib/schema';

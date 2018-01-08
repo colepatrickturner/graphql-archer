@@ -16,8 +16,8 @@ export function myMutationField(parent, args, context, info) {
 export default function() {
   return {
     /*
-    myQueryField,
-    myOtherQueryField
+    myMutationField,
+    myOtherMutationField
     */
   };
 }
