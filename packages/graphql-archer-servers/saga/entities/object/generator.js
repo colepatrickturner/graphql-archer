@@ -1,6 +1,10 @@
+// TODO - abstract this for re-use
+// by having these generators just describe tasks they want to perform
+
 import inquirer from 'inquirer';
 import chalk from 'chalk';
 import turtler from 'turtler';
+import { existsSync } from 'fs';
 import { parse as parseGraphQL } from 'graphql';
 import {
   call,
@@ -31,14 +35,20 @@ import {
 } from 'graphql-archer/src/lib/output';
 
 export default function* objectGenerator({ schema, schemaPath }) {
-  let objectName = false;
-  let description = false;
+  let objectName = null;
+  let description = null;
   // TODO - Load existing schema, if exists
   let fields = [];
 
   // 1. Check if name is set
   while (!objectName) {
     objectName = yield getName();
+
+    if (schema.getType(objectName)) {
+      fail('A type already exists by that name, please choose a new name...');
+      objectName = null;
+    }
+
     continue;
   }
 

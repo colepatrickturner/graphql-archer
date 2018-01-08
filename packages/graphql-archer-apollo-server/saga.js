@@ -132,19 +132,11 @@ export function* getObjectSDL({ schema, objectName, description, fields }) {
   }
 }
 
-export function* writeSchema({
-  schemaPath,
-  schema,
-  objectName,
-  description,
-  fields,
-}) {
-  const relativeSchemaFile = path.join(
-    schemaPath,
-    TYPE_DIRECTORY,
-    objectName,
-    SCHEMA_FILE_NAME
-  );
+export function* writeSchema(
+  folderPath,
+  { schema, objectName, description, fields }
+) {
+  const relativeSchemaFile = path.join(folderPath, SCHEMA_FILE_NAME);
 
   yield call(
     success,
@@ -200,13 +192,8 @@ export function getFunctionForField(field) {
   return `/*\r\n${directFunctionNameSyntax}\r\n*/`;
 }
 
-export function* writeResolver({ schemaPath, objectName, fields }) {
-  const relativeSchemaFile = path.join(
-    schemaPath,
-    TYPE_DIRECTORY,
-    objectName,
-    RESOLVER_FILE_NAME
-  );
+export function* writeResolver(folderPath, { objectName, fields }) {
+  const relativeSchemaFile = path.join(folderPath, RESOLVER_FILE_NAME);
 
   yield call(
     success,
@@ -237,17 +224,35 @@ export default function() {
 }
 
 export function* makeFolder({ schemaPath, objectName }) {
-  const folderPath = path.join(schemaPath, TYPE_DIRECTORY, objectName);
+  let folderPath = null;
+  let suffix = '';
+
+  while (!folderPath) {
+    folderPath = path.join(
+      schemaPath,
+      TYPE_DIRECTORY,
+      `${objectName}${suffix}`
+    );
+    yield folderPath;
+
+    if (existsSync(folderPath)) {
+      fail(`Path already exists: ${folderPath}`);
+      folderPath = null;
+      suffix = `_${new Date().getTime()}`;
+    }
+  }
 
   try {
     yield call(mkdirp.sync, path.resolve(folderPath));
+    success(`Created path at ${chalk.magenta(folderPath)}`);
   } catch (e) {
     fail(`Unable to create path to ${folderPath}:\n${e.message}`);
   }
+
+  return folderPath;
 }
 
-export function* writeIndexFile({ schemaPath, objectName }) {
-  const folderPath = path.join(schemaPath, TYPE_DIRECTORY, objectName);
+export function* writeIndexFile(folderPath) {
   success(`Generating exports at ${chalk.magenta(`${folderPath}/index.js`)}`);
 
   if (hasIndex(folderPath)) {
@@ -272,16 +277,16 @@ export function* writeIndexFile({ schemaPath, objectName }) {
 
 const onObjectGeneration = takeEvery(GENERATE_OBJECT, function*(args) {
   // Make sure folder exists
-  yield call(makeFolder, args);
+  const basePath = yield call(makeFolder, args);
 
   // Print schema
-  yield call(writeSchema, args);
+  yield call(writeSchema, basePath, args);
 
   // Add resolvers
-  yield call(writeResolver, args);
+  yield call(writeResolver, basePath, args);
 
   // Make sure type is modular
-  yield call(writeIndexFile, args);
+  yield call(writeIndexFile, basePath);
 
   yield call(success, 'Done!');
 });
