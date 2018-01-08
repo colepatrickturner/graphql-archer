@@ -1,4 +1,4 @@
-import { writeFileSync } from 'fs';
+import { existsSync, readFileSync, writeFileSync } from 'fs';
 import { writeIndex } from 'create-index';
 import hasIndex from 'create-index/dist/utilities/hasIndex';
 import mkdirp from 'mkdirp';
@@ -25,6 +25,7 @@ import {
   fail,
   info,
   printEmptyRow,
+  debug,
 } from 'graphql-archer/src/lib/output';
 import { getDependencyPackageVersion } from 'graphql-archer/src/lib/util';
 import {
@@ -180,6 +181,25 @@ export function* writeSchema({
   }
 }
 
+export function getFunctionForField(field) {
+  const args = 'obj, args, context, info';
+  const blockComment = '// resolve this field';
+  const directFunctionNameSyntax = `function ${
+    field.name
+  }(${args}) {\r\n${blockComment}\r\n}`;
+
+  try {
+    eval(directFunctionNameSyntax);
+    return `export ${directFunctionNameSyntax}`;
+  } catch (e) {
+    debug(
+      `The following syntax failed to evaluate:\r\n${directFunctionNameSyntax}`
+    );
+  }
+
+  return `/*\r\n${directFunctionNameSyntax}\r\n*/`;
+}
+
 export function* writeResolver({ schemaPath, objectName, fields }) {
   const relativeSchemaFile = path.join(
     schemaPath,
@@ -194,6 +214,26 @@ export function* writeResolver({ schemaPath, objectName, fields }) {
       relativeSchemaFile
     )}`
   );
+
+  // Write the module's resolvers file
+  const source = existsSync(relativeSchemaFile)
+    ? readFileSync(relativeSchemaFile)
+    : '';
+  let updatedSource = fields.reduce((source, field) => {
+    return `${source}\r\n\r\n${getFunctionForField(field)}`;
+  }, source);
+
+  updatedSource += `\r\n\r\n
+export default function() {
+  return {
+    ${fields.map(f => f.name).join(`,\r\n    `)}
+  };
+}`;
+
+  writeFileSync(relativeSchemaFile, updatedSource);
+
+  // Update the schema/resolvers.js file
+  // IDEA: field orchestration?
 }
 
 export function* makeFolder({ schemaPath, objectName }) {
