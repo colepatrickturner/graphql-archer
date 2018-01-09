@@ -76,14 +76,14 @@ export function scaffoldServer(
   }
 
   success(`Finished!
-    ${chalk.yellow('To initialize your project do the following:')}
+    ${chalk.yellow('# 1. To initialize your project do the following:')}
     ${chalk.white(`cd ${projectName}`)}
 
-    ${chalk.grey('Install using your favorite package manager:')}
+    ${chalk.grey('# 2. Install using your favorite package manager:')}
     ${chalk.white(`npm install`)}
     ${chalk.white(`yarn install`)}
 
-    ${chalk.grey('Start generating your schema:')}
+    ${chalk.grey('# 3. Start generating your schema:')}
     ${chalk.white(`graphql-archer generate`)}
   `);
 }
