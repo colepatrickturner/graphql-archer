@@ -1,18 +1,34 @@
 import chalk from 'chalk';
 import fs from 'fs-extra';
 import path from 'path';
-import { success, fail } from 'graphql-archer/src/lib/output';
+import { put, call } from 'redux-saga/effects';
+import { success } from 'graphql-archer/src/lib/output';
 import {
   updateJSONFile,
   addPackageObjects,
   deepMerge,
 } from 'graphql-archer/src/lib/util';
+import { chooseServer, CHOOSE_SERVER } from './chooseServer';
 
-export function getGraphqlServerOptions(state) {
-  return state['graphql-archer-servers'].servers;
+export default function* scaffoldServer({ project }) {
+  while (true) {
+    const choice = yield call(chooseServer);
+    if (!choice) {
+      continue;
+    }
+
+    scaffoldServerChoice(project, choice);
+
+    yield put({
+      type: CHOOSE_SERVER,
+      choice,
+    });
+
+    break;
+  }
 }
 
-export function scaffoldServer(
+export function scaffoldServerChoice(
   { name: projectName, cwd },
   {
     name: serverName,

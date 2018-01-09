@@ -1,16 +1,16 @@
-import { ADD_SERVER_CHOICE } from './constants';
+import { DECLARE_SERVER } from './src/effects/declareServer';
 
 const initialState = { servers: [] };
 export default function serverReducer(state = initialState, action) {
   switch (action.type) {
-    case ADD_SERVER_CHOICE:
-      return getStateWithNewServer(state, action);
+    case DECLARE_SERVER:
+      return reduceDeclaredServer(state, action);
     default:
       return state;
   }
 }
 
-function getStateWithNewServer(
+function reduceDeclaredServer(
   state,
   {
     name,
@@ -25,7 +25,7 @@ function getStateWithNewServer(
   }
 ) {
   if (!name || !value) {
-    throw new Error('Invalid name or value specified to ADD_SERVER_CHOICE');
+    throw new Error('Invalid name or value specified to DECLARE_SERVER');
   }
 
   const servers = [...state.servers].concat({

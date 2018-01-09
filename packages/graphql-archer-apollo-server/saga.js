@@ -12,14 +12,8 @@ import {
   RESOLVER_FILE_NAME,
   INQUIRE_REWRITE_INDEX,
 } from './constants';
-import {
-  call,
-  put,
-  takeEvery,
-  inquire,
-  waitForAnswerTo,
-  tryAgain,
-} from 'graphql-archer/src/effects';
+import { call, takeEvery } from 'redux-saga/effects';
+import { inquire, waitForAnswerTo, tryAgain } from 'graphql-archer/src/effects';
 import {
   success,
   fail,
@@ -28,14 +22,11 @@ import {
   debug,
 } from 'graphql-archer/src/lib/output';
 import { getDependencyPackageVersion } from 'graphql-archer/src/lib/util';
-import {
-  ADD_SERVER_CHOICE,
-  GENERATE_OBJECT,
-} from 'graphql-archer-servers/constants';
 import getSchema from './getSchema';
+import declareServer from 'graphql-archer-servers/src/effects/declareServer';
+import { GENERATE_OBJECT } from 'graphql-archer-servers/src/effects/generateObject';
 
-const injectServerChoice = put({
-  type: ADD_SERVER_CHOICE,
+const declareServerChoice = declareServer({
   name: 'Apollo Server',
   value: KEY,
   templateDir: path.resolve(path.join(__dirname, './template')),
@@ -292,5 +283,5 @@ const onObjectGeneration = takeEvery(GENERATE_OBJECT, function*(args) {
 });
 
 export default function*() {
-  yield [injectServerChoice, onObjectGeneration];
+  yield [declareServerChoice, onObjectGeneration];
 }

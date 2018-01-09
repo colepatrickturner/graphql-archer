@@ -1,4 +1,4 @@
-import { call, take } from '../effects';
+import { call, take } from 'redux-saga/effects';
 import { ANSWER } from './inquire';
 
 export default function waitForAnswerTo(id) {

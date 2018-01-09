@@ -1,5 +1,5 @@
 import inquirer from 'inquirer';
-import { put, takeEvery } from '../effects';
+import { put, takeEvery } from 'redux-saga/effects';
 import { QUESTION, ANSWER } from '../effects/inquire';
 inquirer.registerPrompt(
   'autocomplete',

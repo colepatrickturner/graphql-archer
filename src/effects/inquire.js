@@ -1,4 +1,4 @@
-import { put } from '../effects';
+import { put } from 'redux-saga/effects';
 
 export const QUESTION = Symbol();
 export const ANSWER = Symbol();

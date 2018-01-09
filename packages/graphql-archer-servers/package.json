@@ -10,9 +10,7 @@
     "type": "git",
     "url": "git+https://github.com/colepatrickturner/graphql-archer.git"
   },
-  "keywords": [
-    "graphql"
-  ],
+  "keywords": ["graphql"],
   "author": "Cole Turner",
   "license": "ISC",
   "bugs": {
@@ -20,5 +18,6 @@
   },
   "homepage": "https://github.com/colepatrickturner/graphql-archer#readme",
   "dependencies": {
+    "redux-saga": "^0.16.0"
   }
 }

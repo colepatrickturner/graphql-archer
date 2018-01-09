@@ -7,7 +7,6 @@ import merge from 'lodash.mergewith';
 import { fail } from './output';
 import packageJSON from '../../package.json';
 import toPascalCase from 'to-pascal-case';
-import toCamelCase from 'camelcase';
 
 import { success } from '../lib/output';
 
@@ -20,8 +19,9 @@ export function parseRCFile(fileName) {
 }
 
 export const getPluginSagasObject = () => getPluginPropertiesObject('saga');
-export const getPluginReducersObject = () =>
-  getPluginPropertiesObject('reducer');
+export const getPluginReducersObject = () => {
+  return getPluginPropertiesObject('reducer');
+};
 
 export function getPluginPropertiesObject(prop) {
   const { plugins = [] } = settings;
@@ -69,18 +69,6 @@ export function toGraphQLTypeName(str) {
       .replace(/^[0-9]/, '') // remove leading numbers
       .replace(/[^a-zA-Z0-9]/g, '') // remove non alphanumeric characters
   );
-}
-
-export function toGraphQLFieldName(str) {
-  return toCamelCase(str.replace(/[^a-zA-Z0-9]/g, ''));
-}
-
-export function getGraphQLBaseType(type) {
-  if ('type' in type) {
-    return getGraphQLBaseType(type.type);
-  }
-
-  return type;
 }
 
 export function updateJSONFile(file, updater) {

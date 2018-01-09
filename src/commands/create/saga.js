@@ -1,12 +1,11 @@
 import chalk from 'chalk';
 import { success, fail } from '../../lib/output';
 import { toFileSystemName, createProject } from '../../lib/util';
-
-import { namePicker, put } from '../../effects';
+import namePicker from '../../effects/namePicker';
+import scaffoldProject from '../../effects/scaffoldProject';
 
 export const QUESTION_PROJECT_NAME = Symbol();
 export const QUESTION_IS_NAME_GOOD = Symbol();
-export const SCAFFOLD_PROJECT = Symbol();
 
 export default function* createProjectSaga(action) {
   let { name } = action;
@@ -23,7 +22,7 @@ export default function* createProjectSaga(action) {
 
     try {
       const project = createProject(name);
-      yield put({ type: SCAFFOLD_PROJECT, project });
+      yield scaffoldProject(project);
     } catch (e) {
       fail(e.message);
     }

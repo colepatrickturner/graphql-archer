@@ -1,4 +1,4 @@
-import { call, fork, takeEvery } from '../effects';
+import { call, fork, takeEvery } from 'redux-saga/effects';
 import { getPluginSagasObject } from '../lib/util';
 import { debug } from '../lib/output';
 

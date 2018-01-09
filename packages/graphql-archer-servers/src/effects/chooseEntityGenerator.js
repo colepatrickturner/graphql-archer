@@ -1,24 +1,26 @@
 import chalk from 'chalk';
-import {
-  select,
-  inquire,
-  call,
-  waitForAnswerTo,
-  tryAgain,
-} from 'graphql-archer/src/effects';
+import { inquire, waitForAnswerTo, tryAgain } from 'graphql-archer/src/effects';
+import { call } from 'redux-saga/effects';
 import { success, fail } from 'graphql-archer/src/lib/output';
 import { inProject, getSchemaPath } from 'graphql-archer/src/lib/util';
-import { QUESTION_ENTITY_TYPE, ENTITY_TYPES } from '../constants';
-import { getGraphqlServerOptions } from '../util';
+import getServerOptions from '../../src/effects/getServerOptions';
 import { chooseServer } from './chooseServer';
-import * as entityGenerators from './entities';
+import * as entityGenerators from '../generators';
+
+export const ENTITY_TYPES = Object.freeze({
+  object: 'Object Type',
+  input: 'Input Type',
+  mutation: 'Mutation Type',
+  scalar: 'Scalar',
+});
+export const QUESTION_ENTITY_TYPE = Symbol();
 
 export async function getSchema(server, schemaPath) {
   const importer = require(`${server.value}/getSchema`);
   return importer(schemaPath);
 }
 
-export default function* generateEntitySaga(action) {
+export default function* chooseEntityGenerator(action) {
   let { server, entity } = action;
   let schema;
 
@@ -30,7 +32,7 @@ export default function* generateEntitySaga(action) {
     return fail('No .archerrc detected - this is likely not a project folder.');
   }
 
-  const choices = yield select(getGraphqlServerOptions);
+  const choices = yield getServerOptions();
   if (!choices.length) {
     return fail('No server plugins detected - cannot continue.');
   } else if (choices.length === 1) {
